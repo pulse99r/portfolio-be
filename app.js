@@ -1,5 +1,5 @@
 const express = require('express')
-// const peopleController = require("./controllers/peopleController")
+const messageController = require("./controllers/messages")
 
 const app = express()
 const cors = require('cors')
@@ -8,7 +8,7 @@ app.use(express.json())
 app.use(cors())
 
 // -------- project routes -------- 
-// app.use('/people', peopleController)
+app.use('/messages', messageController)
 
 // -------- Default or Home routes -------- 
 app.get('/cors', (req, res) => {
