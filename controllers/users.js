@@ -1,7 +1,7 @@
-const express = require('express')
-const messageController = require("./controllers/messages")
-const usersController = require('./controllers/users')
-
+// Users
+const express = require('express');
+const usersController = express.Router();
+// const db = require('../db/dbConfig');
 
 // Import the bcryptjs library
 const bcrypt = require('bcryptjs');
@@ -32,35 +32,34 @@ bcrypt.hash(plainPassword, saltRounds, (err, hash) => {
     } else {
       console.log('Password is incorrect.');
     }
+    });
   });
+
+
+const {
+  getAllUsers,
+  getOneUser,
+  updateUser,
+  createUser
+} = require('../queries/users.js')
+
+usersController.get('/', async (req, res) =>{
+  try {
+    const users = await getAllUsers()
+    res.status(200).json(users)
+  } catch (error) {
+    res.status(400).json({error: 'Server Not Responding'})
+  }
+})
+
+usersController.get('/:id', async (req, res) =>{
+  const {id} = req.params
+  try {
+    const user = await getOneUser(id)
+    res.status(200).json(user)
+  } catch (error) {
+    res.status(400).json({error: 'Server Not Responding'})
+  }
 });
 
-
-const app = express()
-const cors = require('cors')
-app.use(express.json())
-
-app.use(cors())
-
-// -------- project routes -------- 
-app.use('/messages', messageController)
-app.use('/users', usersController)
-
-// -------- Default or Home routes -------- 
-app.get('/cors', (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*');
-  res.send({ "msg": "This has CORS enabled 🎈" })
-})
-
-app.get('/', (req, res) => {
-  const msg = `
-  Welcome to my portfolio site!!
-  `
-  res.send(msg)
-})
-
-app.get('*', (req, res) => {
-  res.send('The page you are looking for does not exist')
-})
-
-module.exports = app;
+module.exports = usersController;
